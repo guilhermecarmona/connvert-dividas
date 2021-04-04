@@ -1,0 +1,11 @@
+{
+  "name": "mongo",
+  "type": "mongodb",
+  "host": "mongodb",
+  "port": 27017,
+  "database": "connvert_dividas",
+  "useUnifiedTopology": true,
+  "entities": [
+    "./src/modules/**/infra/typeorm/schemas/*.ts"
+  ]
+}
