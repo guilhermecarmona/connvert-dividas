@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import logoImg from '../../assets/logo.png';
-import { FiPlusCircle, FiPower } from 'react-icons/fi';
-// import { useAuth } from '../../contexts/AuthContext';
+import { FiPlusCircle } from 'react-icons/fi';
 import api from '../../services/api';
 
 import {
@@ -19,6 +18,7 @@ import { Link } from 'react-router-dom';
 import { useLoading } from '../../contexts/LoadingContext';
 import DebtDialog from '../../components/DebtDialog';
 import jsonplaceholderApi from '../../services/jsonplaceholder-api';
+import toast from 'react-hot-toast';
 
 interface UserWithDebts {
   name: string;
@@ -44,7 +44,6 @@ const Dashboard: React.FC = () => {
   const [customers, setCustomers] = useState<CustomerDto[]>([]);
   const [displayDialog, setDisplayDialog] = useState<boolean>(false);
   const { display, hide } = useLoading();
-  // const { signOut, user } = useAuth();
 
   async function getUsersWithDebts() {
     display();
@@ -79,10 +78,17 @@ const Dashboard: React.FC = () => {
     payload: Omit<Debt, 'id' | 'formattedDate'>
   ) => {
     display();
-    await api.post('/debts', payload);
-    await getUsersWithDebts();
-    setDisplayDialog(false);
-    hide();
+    try {
+      await api.post('/debts', payload);
+      await getUsersWithDebts();
+      toast.success(`Dívida adicionada.`);
+    } catch (e) {
+      console.log(e);
+      toast.error(`Não foi possível adicionar a dívida`);
+    } finally {
+      setDisplayDialog(false);
+      hide();
+    }
   };
 
   return (

@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { FiPower, FiArrowLeft, FiEdit, FiTrash2 } from 'react-icons/fi';
+import { FiArrowLeft, FiEdit, FiTrash2 } from 'react-icons/fi';
 import { format } from 'date-fns';
 import logoImg from '../../assets/logo.png';
-// import { useAuth } from '../../contexts/AuthContext';
 import api from '../../services/api';
 import jsonplaceholderApi from '../../services/jsonplaceholder-api';
 
@@ -48,8 +47,6 @@ const Customer: React.FC = () => {
   const { search } = useLocation();
   const history = useHistory();
   const customer_id = search.split('=')[1];
-
-  // const { signOut, user } = useAuth();
 
   useEffect(() => {
     async function getCustomer() {
@@ -137,10 +134,18 @@ const Customer: React.FC = () => {
   ) => {
     if (!selectedDebt) return;
     display();
-    await api.put(`/debts/${selectedDebt.id}`, payload);
-    await getDebts();
-    setDisplayDebtDialog(false);
-    hide();
+    try {
+      await api.put(`/debts/${selectedDebt.id}`, payload);
+      await getDebts();
+      toast.success(`Dívida editada.`);
+    } catch (e) {
+      console.log(e);
+      toast.error(`Não foi possível editar a dívida`);
+    } finally {
+      hide();
+      setDisplayDebtDialog(false);
+      setSelectedDebt(undefined);
+    }
   };
 
   return (
