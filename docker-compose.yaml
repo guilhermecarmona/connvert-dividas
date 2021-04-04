@@ -1,0 +1,43 @@
+version: "3"
+services:
+    web:
+        image: connvert-web
+        restart: always
+        ports:
+            - "3000:3000"
+        volumes:
+            - ./web:/web
+            - /web/node_modules
+        links:
+            - backend
+        networks:
+            - connvertnetwork
+
+    backend:
+        image: connvert-backend
+        restart: always
+        ports:
+            - "8880:8880"
+        volumes:
+            - ./backend:/backend
+            - /backend/node_modules
+        depends_on:
+            - mongodb
+        networks:
+            - connvertnetwork
+
+    mongodb:
+        image: mongo
+        restart: always
+        container_name: mongodb_connvert
+        volumes:
+            - ./data-node:/data/db
+        ports:
+            - 27017:27017
+        command: mongod --noauth
+        networks:
+            - connvertnetwork
+
+networks:
+  connvertnetwork:
+      driver: bridge
